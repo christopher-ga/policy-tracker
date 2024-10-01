@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  resources :bills, only: [:index, :create]
+  get 'bills/data', to: 'bills#bills_data'
+  post 'bills/bill_data', to: 'bills#bill_data'
+  post 'bills/sponsor_data', to: 'bills#sponsor_data'
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
