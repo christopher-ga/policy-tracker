@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :saved_bills
   resources :users
   resources :bills, only: [:index, :create]
   get 'bills/data', to: 'bills#bills_data'
