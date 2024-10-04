@@ -1,0 +1,2 @@
+class UserSavedBillsController < ApplicationController
+end

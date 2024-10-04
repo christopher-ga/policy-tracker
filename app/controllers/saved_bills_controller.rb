@@ -1,2 +1,0 @@
-class SavedBillsController < ApplicationController
-end

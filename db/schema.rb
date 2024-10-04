@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_03_232756) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_04_053219) do
   create_table "bills", force: :cascade do |t|
     t.string "title"
     t.string "bill_id"
@@ -27,6 +27,24 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_03_232756) do
     t.text "sponsor_url"
   end
 
+  create_table "saved_bills", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "bill_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["bill_id"], name: "index_saved_bills_on_bill_id"
+    t.index ["user_id"], name: "index_saved_bills_on_user_id"
+  end
+
+  create_table "user_saved_bills", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "bill_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["bill_id"], name: "index_user_saved_bills_on_bill_id"
+    t.index ["user_id"], name: "index_user_saved_bills_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "name"
     t.string "email"
@@ -35,4 +53,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_03_232756) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "saved_bills", "bills"
+  add_foreign_key "saved_bills", "users"
+  add_foreign_key "user_saved_bills", "bills"
+  add_foreign_key "user_saved_bills", "users"
 end
