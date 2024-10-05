@@ -3,6 +3,9 @@ import React, {useEffect, useState} from "react"
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
 
 const BillBannerComponent = ({bill}) => {
+
+    const [isSaved, setIsSaved] = useState(bill.saved)
+
     const handleSaveBill = async () => {
         const response = await fetch('/bills', {
             method: "POST",
@@ -51,7 +54,7 @@ const BillBannerComponent = ({bill}) => {
             </div>
 
             <button onClick={handleSaveBill}>
-                Save Bill
+                {isSaved ? "Already Saved!" : "Save Bill"}
             </button>
         </>
     )

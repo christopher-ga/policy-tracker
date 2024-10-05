@@ -9,6 +9,7 @@ const Bill = () => {
 
     useEffect(() => {
         const fetchBills = async () => {
+            const userBills = await fetchUserBills();
             const response = await fetch("/bills/data");
             const data = await response.json();
             const billStorage = {};
@@ -32,7 +33,7 @@ const Bill = () => {
                     "updateDate": bill.updateDate,
                     "url": bill.url,
                     "type": bill.type,
-
+                    "saved": false,
                     "introducedDate": billData.bill?.introducedDate,
                     "latestAction": billData.bill?.latestAction?.text,
                     "sponsorFirstName": billData.bill.sponsors[0]?.firstName,
@@ -63,10 +64,35 @@ const Bill = () => {
 
             await Promise.all(fetchSponsorDataPromises);
 
+            //iterate through bill storage if find matching
+
+            for (const bill of userBills) {
+                console.log(bill.bill_id);
+                if (bill.bill_id in billStorage) {
+                    console.log(bill.bill_id, " needs to be marked");
+
+                    billStorage[bill.bill_id]["saved"] = true;
+                    console.log(billStorage[bill.bill_id]);
+                }
+            }
+
+
             setBills(Object.values(billStorage));
             console.log(billStorage);
 
+
         };
+
+        const fetchUserBills = async() => {
+            const response = await fetch('/user_saved_bills');
+
+            const savedBills = await response.json();
+
+            console.log("user bills:", savedBills);
+
+            return savedBills
+
+        }
 
         fetchBills();
 

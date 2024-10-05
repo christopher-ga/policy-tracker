@@ -1,8 +1,9 @@
 Rails.application.routes.draw do
-  resources :user_saved_bills
+  resources :user_saved_bills, only:[:index]
   resources :users
   resources :bills, only: [:index, :create]
   get 'bills/data', to: 'bills#bills_data'
+  get "userbills", to: "user_saved_bills#index"
   post 'bills/bill_data', to: 'bills#bill_data'
   post 'bills/sponsor_data', to: 'bills#sponsor_data'
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
