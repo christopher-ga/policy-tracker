@@ -5,13 +5,17 @@ class BillsController < ApplicationController
   end
 
   def create
-    @bill = Bill.create(bill_parameters)
-    if @bill.save
-      render json: {status: 'success', bill: @bill}, status: :created
+    @bill = Bill.find_or_create_by(bill_id: bill_parameters[:bill_id], bill_type: bill_parameters[:bill_type]) do |bill|
+      bill.assign_attributes(bill_parameters)
+    end
+
+    if @bill.persisted?
+      current_user.user_saved_bills.create(bill: @bill)
+
+      render json: { status: 'success', bill: @bill }, status: :created
     else
       render json: { status: 'error', message: @bill.errors.full_messages }, status: :unprocessable_entity
     end
-
   end
 
 
@@ -40,7 +44,6 @@ class BillsController < ApplicationController
   end
 
   def bill_parameters
-    puts params
     bill_params = params.require(:bill).permit(
       :id,
       :title,

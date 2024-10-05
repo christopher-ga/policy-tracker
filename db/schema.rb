@@ -27,15 +27,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_04_053219) do
     t.text "sponsor_url"
   end
 
-  create_table "saved_bills", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "bill_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["bill_id"], name: "index_saved_bills_on_bill_id"
-    t.index ["user_id"], name: "index_saved_bills_on_user_id"
-  end
-
   create_table "user_saved_bills", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "bill_id", null: false
@@ -53,8 +44,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_04_053219) do
     t.datetime "updated_at", null: false
   end
 
-  add_foreign_key "saved_bills", "bills"
-  add_foreign_key "saved_bills", "users"
   add_foreign_key "user_saved_bills", "bills"
   add_foreign_key "user_saved_bills", "users"
 end
