@@ -1,5 +1,6 @@
-class BillsController < ApplicationController
+class Api::V1::BillsController < ApplicationController
 
+  before_action :set_api_key
   def index
 
   end
@@ -18,29 +19,22 @@ class BillsController < ApplicationController
     end
   end
 
-
-  def bills_data
-    apiKey = Rails.application.credentials.congress_api_key
-    response = Faraday.get("https://api.congress.gov/v3/bill?api_key=#{apiKey}")
+  def congress_bills
+    response = Faraday.get("https://api.congress.gov/v3/bill?api_key=#{@api_key}")
     render json: JSON.parse(response.body)
   end
 
-  def bill_data
-    fetch_additional_data
-  end
-
-  def sponsor_data
-    fetch_additional_data
+ def congress_bill
+   url = params[:url] + "&api_key=#{@api_key}"
+   response = Faraday.get(url)
+   render json: JSON.parse(response.body)
   end
 
 
   private
 
-  def fetch_additional_data
-    apiKey = Rails.application.credentials.congress_api_key
-    url = params[:_json] + "&api_key=#{apiKey}"
-    response = Faraday.get(url)
-    render json: JSON.parse(response.body)
+  def set_api_key
+    @api_key = Rails.application.credentials.congress_api_key
   end
 
   def bill_parameters
@@ -63,3 +57,6 @@ class BillsController < ApplicationController
   end
 
 end
+
+
+
