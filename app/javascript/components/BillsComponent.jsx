@@ -9,6 +9,8 @@ const Bill = () => {
 
     useEffect(() => {
         const fetchBills = async () => {
+
+            //fetch the api bills which returns minimum data
             const userBills = await fetchUserBills();
             const response = await fetch("/bills/data");
             const data = await response.json();
@@ -45,6 +47,7 @@ const Bill = () => {
             });
 
             await Promise.all(fetchBillDataPromises);
+
             const fetchSponsorDataPromises = Object.values(billStorage).map(async (bill) => {
                 if (bill.sponsorUrl) {
                     const sponsorDataResponse = await fetch("/bills/sponsor_data", {
