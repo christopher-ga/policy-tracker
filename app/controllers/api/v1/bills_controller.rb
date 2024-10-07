@@ -28,8 +28,38 @@ class Api::V1::BillsController < ApplicationController
    url = params[:url] + "&api_key=#{@api_key}"
    response = Faraday.get(url)
    render json: JSON.parse(response.body)
-  end
+ end
 
+  def congress_bills_search
+    congress = "118"
+    collection_type = "BILLS"
+    search_terms = params[:searchTerms]
+    query = "collection:#{collection_type} congress:#{congress} #{search_terms}"
+
+    response = Faraday.post("https://api.govinfo.gov/search?api_key=#{@api_key}") do |req|
+      req.headers['Content-Type'] = 'application/json'
+      req.body = {
+        query: query,
+        pageSize: 10,
+        offsetMark: "*",
+        sorts: [
+          {
+            field: "relevancy",
+            sortOrder: "DESC"
+          }
+        ],
+        historical: true,
+        resultLevel: "default"
+      }.to_json
+    end
+
+    if response.success?
+      render json: JSON.parse(response.body)
+    else
+      render json: { error: "Request failed", status: response.status }, status: :unprocessable_entity
+    end
+
+  end
 
   private
 

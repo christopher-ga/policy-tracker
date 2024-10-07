@@ -68,6 +68,30 @@ export const batchFetchSponsorImage = async (bills) => {
     }));
 }
 
+export const searchForBills = async (searchTerms) => {
+
+    try {
+
+        const response = await fetch("/api/v1/bills/congress_bills_search", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": csrfToken
+            },
+            body: JSON.stringify({searchTerms})
+        })
+
+        if (!response.ok) {
+            throw new Error(`HTTP error searching for bills: ${response.status}`)
+        }
+
+
+        return await response.json()
+    } catch (e) {
+        console.error("Error searching for bills: ", e)
+    }
+
+}
 
 
 

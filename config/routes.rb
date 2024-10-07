@@ -13,6 +13,7 @@ Rails.application.routes.draw do
           get 'congress_bills', to: 'bills#congress_bills'
           post 'congress_bills', to: 'bills#congress_bill'
           post 'congress_sponsor', to: 'bills#congress_sponsor'
+          post "congress_bills_search", to: "bills#congress_bills_search"
         end
       end
     end

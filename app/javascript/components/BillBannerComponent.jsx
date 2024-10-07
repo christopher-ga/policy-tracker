@@ -18,10 +18,10 @@ const BillBannerComponent = ({bill}) => {
                 <p>{bill.title}</p>
             </div>
 
-            <div>
-                <h2>sponsors</h2>
-                <p>{bill.sponsorFirstName}</p>
-            </div>
+            {/*<div>*/}
+            {/*    <h2>sponsors</h2>*/}
+            {/*    <p>{bill.sponsorFirstName}</p>*/}
+            {/*</div>*/}
 
             <button onClick={handleSaveBill}>
                 {isSaved ? "Already Saved!" : "Save Bill"}
