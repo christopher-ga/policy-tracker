@@ -2,6 +2,7 @@
 Rails.application.routes.draw do
 
   root "pages#stub_page"
+  get "landing" => "pages#landing_page"
 
   namespace :api do
     namespace :v1 do

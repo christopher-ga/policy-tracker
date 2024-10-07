@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+
+  <style>
+    .hidden {
+        display: none;
+    }
+  </style>
+
+</head>
+
+<body>
+
+<nav>
+  <button id="sign-up-btn">Sign up</button>
+  <button id="sign-in-btn">Sign in</button>
+</nav>
+
+<div class="sign-in-container">
+  <h2>Sign in</h2>
+  <%= render "sessions/form" %>
+
+</div>
+
+<div class="sign-up-container">
+  <h2>Sign up</h2>
+  <%= render "users/form", user: @user %>
+</div>
+
+
+
+<script>
+    // Get the buttons and containers
+    const signUpBtn = document.getElementById('sign-up-btn');
+    const signInBtn = document.getElementById('sign-in-btn');
+    const signUpContainer = document.querySelector('.sign-up-container');
+    const signInContainer = document.querySelector('.sign-in-container');
+
+    // Function to toggle containers
+    function showSignUp() {
+        signUpContainer.classList.remove('hidden');
+        signInContainer.classList.add('hidden');
+    }
+
+    function showSignIn() {
+        signInContainer.classList.remove('hidden');
+        signUpContainer.classList.add('hidden');
+    }
+
+    // Add click event listeners to the buttons
+    signUpBtn.addEventListener('click', showSignUp);
+    signInBtn.addEventListener('click', showSignIn);
+
+    // Show sign-in by default
+    showSignIn();
+</script>
+
+</body>
+</html>
