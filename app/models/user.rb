@@ -4,7 +4,6 @@ class User < ApplicationRecord
   has_many :user_saved_bills
   has_many :bills, through: :user_saved_bills
 
-  validates :name, presence: true
   validates :email, presence: true,
             format: { with: /\S+@\S+/ },
             uniqueness: { case_sensitive: false }
