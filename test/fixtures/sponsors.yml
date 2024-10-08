@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  party: MyString
+  state: MyString
+  last_name: MyString
+  member_type: MyString
+  bioguide_id: MyString
+  image_url: MyString
+
+two:
+  name: MyString
+  party: MyString
+  state: MyString
+  last_name: MyString
+  member_type: MyString
+  bioguide_id: MyString
+  image_url: MyString

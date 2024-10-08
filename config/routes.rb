@@ -3,11 +3,11 @@ Rails.application.routes.draw do
 
   root "pages#stub_page"
   get "landing" => "pages#landing_page"
+  get "test" => "sponsors#test_route"
 
   namespace :api do
     namespace :v1 do
       get "user_bills", to: "user_saved_bills#index"
-
       resources :bills, only: [:index, :create] do
         collection do
           get 'congress_bills', to: 'bills#congress_bills'

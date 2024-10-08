@@ -24,11 +24,11 @@ class Api::V1::BillsController < ApplicationController
     render json: JSON.parse(response.body)
   end
 
- def congress_bill
-   url = params[:url] + "&api_key=#{@api_key}"
-   response = Faraday.get(url)
-   render json: JSON.parse(response.body)
- end
+  def congress_bill
+    url = params[:url] + "&api_key=#{@api_key}"
+    response = Faraday.get(url)
+    render json: JSON.parse(response.body)
+  end
 
   def congress_bills_search
     congress = "118"
@@ -61,7 +61,48 @@ class Api::V1::BillsController < ApplicationController
 
   end
 
+  def test_route
+    test_bill = {
+      firstName: "test",
+      fullName: "test",
+      party: "test",
+      state: "test",
+      last_name: "test",
+      bioguideId: "Y000064"
+    }
+
+    sponsor = fetch_bill_sponsor_information(test_bill)
+    render plain: "Sponsor info: #{sponsor}"
+
+  end
+
   private
+
+  def fetch_bill_sponsor_information(bill)
+    sponsor_data = {
+      first_name: bill.sponsors.firstName,
+      full_title: bill.sponsors.fullName,
+      party: bill.sponsors.party,
+      state: bill.sponsors.state,
+      last_name: bill.sponsors.lastName,
+      bioguide_id: bill.sponsors.bioguideId
+    }
+
+    url = "https://api.congress.gov/v3/member/#{bill.sponsors[0].bioguideId}?api_key=#{@api_key}"
+    response = Faraday.get(url)
+    data = JSON.parse(response.body)
+
+    sponsor_data.image_url = data.member.depiction.imageUrl
+    sponsor_data.member_type = data.member.terms[-1].memberType
+
+    Sponsor.create(sponsor_data)
+
+    bill_record = Bill.find(bill_id: bill.bill_id)
+    BillSponsor.create(bill: bill_record, sponsor: sponsor)
+
+    puts sponsor
+    sponsor
+  end
 
   def set_api_key
     @api_key = Rails.application.credentials.congress_api_key
@@ -86,6 +127,19 @@ class Api::V1::BillsController < ApplicationController
     )
   end
 
+  def sponsor_parameters
+    sponsor_params = params.require(:sponsor).permit(
+      :id,
+      :first_name,
+      :last_name,
+      :full_title,
+      :party,
+      :state,
+      :bioguide_id,
+      :image_url,
+      :member_type
+    )
+  end
 end
 
 

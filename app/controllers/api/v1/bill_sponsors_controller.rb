@@ -1,0 +1,2 @@
+class BillSponsorsController < ApplicationController
+end
