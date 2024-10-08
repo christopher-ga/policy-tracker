@@ -1,15 +1,21 @@
-<%= form_with(model: user) do |f| %>
-  <%= f.label :name %>
-  <%= f.text_field :name, autofocus: true %>
+<%= form_with(model: @user, url: users_path, html: { class: 'flex-form' }) do |f| %>
 
-  <%= f.label :email %>
-  <%= f.email_field :email %>
+  <%= f.label :email, "EMAIL ADDRESS", class: "input-label" %>
+  <%= f.email_field :email, class: "input" %>
 
-  <%= f.label :password %>
-  <%= f.password_field :password %>
+  <%= f.label :password, "PASSWORD", class: "input-label" %>
+  <%= f.password_field :password, class: "input" %>
 
-  <%= f.label :password_confirmation, "Confirm Password" %>
-  <%= f.password_field :password_confirmation %>
+  <%= f.label :password_confirmation, "CONFIRM PASSWORD", class: "input-label" %>
+  <%= f.password_field :password_confirmation, class: "input" %>
 
-  <%= f.submit %>
+  <%= f.submit "Register", class: "btn test btn-dark" %>
+
+  <div class="separator">
+    <hr class="line">
+    <p> or </p>
+    <hr class="line">
+  </div>
+
+  <button type="button" id="sign-in-btn" class="btn btn-light">Log in</button>
 <% end %>
