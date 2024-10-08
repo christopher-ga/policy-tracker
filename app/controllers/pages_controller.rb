@@ -12,6 +12,7 @@ class PagesController < ApplicationController
   end
 
   def landing_page
+    @user = User.new
     if current_user
       redirect_to root_path
     end

@@ -16,7 +16,7 @@ class UsersController < ApplicationController
 
     if @user.save
       session[:user_id] = @user.id
-      redirect_to @user
+      redirect_to root_path, notice: "Welcome back, #{user.email}!"
     else
       render :new, status: :unprocessable_entity
     end
@@ -33,7 +33,7 @@ class UsersController < ApplicationController
 
   def user_params
     params.require(:user).
-      permit(:name, :email, :password, :password_confirmation)
+      permit(:email, :password, :password_confirmation)
   end
 
 end
