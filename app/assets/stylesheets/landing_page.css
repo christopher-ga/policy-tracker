@@ -1,0 +1,210 @@
+@font-face {
+    font-family: "Futura Medium";
+    src: url("Futura Medium.otf") format("opentype");
+}
+
+@font-face {
+    font-family: "Futura LT Light";
+    src: url("Futura light.TTF") format("truetype");
+}
+
+@font-face {
+    font-family: "din-2014";
+    src: url("DIN-2014_Regular.otf") format("opentype");
+}
+
+* {
+    font-family: din-2014;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.wrapper {
+    display: grid;
+    grid-template-columns: 1.4fr 2fr;
+    height: 100vh;
+}
+
+
+.left {
+    grid-column: 1;
+    background-color: gray;
+    background-color: #EDEDF1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/*logo styles */
+.logo {
+    margin-bottom: 50px;
+}
+
+.logo h1 {
+    font-size: 40px;
+}
+
+
+.logo-start {
+    color: #c80606;
+    font-family: "Futura Medium";
+    margin-right: 4px;
+    letter-spacing: 1px;
+}
+
+.logo-end {
+    font-family: "Futura LT Light";
+    font-weight: lighter;
+}
+
+/*form styles*/
+.form-container {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    /*max-width: 400px;*/
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 5px;
+    margin: 0 50px;
+    -webkit-box-shadow: 0px 3px 23px -5px rgba(0,0,0,0.45);
+    -moz-box-shadow: 0px 3px 23px -5px rgba(0,0,0,0.45);
+    box-shadow: 0px 3px 23px -5px rgba(0,0,0,0.45);
+}
+
+.form-container h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+.input-label {
+    color: #9f9e9e;
+    margin-bottom: 8px;
+    margin-top: 20px;
+    font-size: 12px;
+
+    letter-spacing: .1rem;
+}
+
+.input {
+    height: 50px;
+    font-size: 18px;
+    padding: 0 10px 0;
+    border: solid black 1px;
+    border-radius: 5px;
+}
+
+.flex-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.separator {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.separator p {
+    margin: 0 15px 0;
+    font-size: 18px;
+}
+
+.btn {
+    padding: 10px;
+    font-size: 18px;
+    border-radius: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+.btn-light {
+    background-color: white;
+    color: black;
+    border: solid black 1px;
+}
+
+.btn-dark {
+    background-color: #A3A6AF;
+    margin-top: 30px;
+}
+
+
+.btn-light:hover {
+    color: #0e73d3;
+    border: #0d74d6 1px solid;
+}
+
+.btn-dark:hover {
+    background-color: #1171cf;
+
+}
+
+.line {
+    width: 80%;
+    border: solid #A3A6AF 1px
+}
+
+.hidden {
+    display: none;
+}
+
+
+/*right side text styles*/
+.right {
+    grid-column: 2;
+    background-image: url('stub-image.jpg');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.text-content {
+    color: white;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 20px;
+    align-items: center;
+}
+
+.text-content h2 {
+    font-weight: lighter;
+    font-size: 30px;
+    margin-bottom: 20px;
+}
+
+.text-content p {
+    font-size: 25px;
+    color: #bfbebe;
+}
+
+.right hr {
+    width: 80px;
+    border: 1px solid white;
+    margin-bottom: 25px;
+}
+
+.right::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.81);
+}
