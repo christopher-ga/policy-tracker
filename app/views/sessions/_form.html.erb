@@ -1,9 +1,18 @@
-<%= form_with(url: session_path) do |f| %>
-  <%= f.label :email %>
-  <%= f.email_field :email, autofocus: true %>
+<%= form_with(url: session_path, html: { class: 'flex-form' }) do |f| %>
+  <%= f.label :email, "EMAIL ADDRESS", class: "input-label" %>
+  <%= f.email_field :email, class: "input" %>
 
-  <%= f.label :password %>
-  <%= f.password_field :password %>
+  <%= f.label :password, "PASSWORD", class: "input-label" %>
+  <%= f.password_field :password, class: "input" %>
 
-  <%= f.submit "Sign In" %>
+  <%= f.submit "Log in", class: "btn btn-dark" %>
+
+  <div class="separator">
+    <hr class="line">
+    <p> or </p>
+    <hr class="line">
+  </div>
+
+  <button type="button" id="sign-up-btn" class="btn btn-light">Register for an Account</button>
 <% end %>
+

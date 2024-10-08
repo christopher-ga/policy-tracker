@@ -5,58 +5,60 @@
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
-
-  <style>
-    .hidden {
-        display: none;
-    }
-  </style>
-
+  <%= stylesheet_link_tag 'landing_page.css', media: 'all' %>
 </head>
 
 <body>
+<div class="wrapper">
+  <section class="left">
+    <div class="logo">
+      <h1><span class="logo-start">POLICY</span><span class="logo-end">WATCH</span></h1>
+    </div>
 
-<nav>
-  <button id="sign-up-btn">Sign up</button>
-  <button id="sign-in-btn">Sign in</button>
-</nav>
+    <div id="sign-in-container" class="hidden form-container">
+      <h2>Login</h2>
+      <%= render "sessions/form" %>
+    </div>
 
-<div class="sign-in-container">
-  <h2>Sign in</h2>
-  <%= render "sessions/form" %>
+    <div id="sign-up-container" class="hidden form-container">
+      <h2>Register</h2>
+      <%= render "users/form", user: @user %>
+    </div>
 
+  </section>
+
+  <section class="right">
+    <section class="text-content">
+      <h2>Interested in Policy?</h2>
+      <hr>
+      <p>POLICY WATCH is an up-to-date, personalized, policy platform that makes it easy
+        to get updates on the issues you care most about.</p>
+    </section>
+  </section>
 </div>
-
-<div class="sign-up-container">
-  <h2>Sign up</h2>
-  <%= render "users/form", user: @user %>
-</div>
-
 
 
 <script>
-    // Get the buttons and containers
     const signUpBtn = document.getElementById('sign-up-btn');
     const signInBtn = document.getElementById('sign-in-btn');
-    const signUpContainer = document.querySelector('.sign-up-container');
-    const signInContainer = document.querySelector('.sign-in-container');
+    const signUpContainer = document.getElementById('sign-up-container');
+    const signInContainer = document.getElementById('sign-in-container');
 
-    // Function to toggle containers
-    function showSignUp() {
+    function showSignUp(e) {
+        if (e) e.preventDefault()
         signUpContainer.classList.remove('hidden');
         signInContainer.classList.add('hidden');
     }
 
-    function showSignIn() {
+    function showSignIn(e) {
+        if (e) e.preventDefault()
         signInContainer.classList.remove('hidden');
         signUpContainer.classList.add('hidden');
     }
 
-    // Add click event listeners to the buttons
     signUpBtn.addEventListener('click', showSignUp);
     signInBtn.addEventListener('click', showSignIn);
 
-    // Show sign-in by default
     showSignIn();
 </script>
 
