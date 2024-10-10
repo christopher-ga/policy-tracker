@@ -124,6 +124,7 @@
     border: none;
     color: white;
     cursor: pointer;
+    transition: 0.5s;
 }
 
 .btn-light {
@@ -145,7 +146,6 @@
 
 .btn-dark:hover {
     background-color: #1171cf;
-
 }
 
 .line {
