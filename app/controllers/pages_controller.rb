@@ -1,6 +1,6 @@
 class PagesController < ApplicationController
   layout false, only: [:landing_page]
-  before_action :require_sign_in, except: [:landing_page]
+  before_action :require_sign_in, except: [:landing_page, :home_page]
 
   def require_sign_in
     unless current_user
@@ -16,6 +16,9 @@ class PagesController < ApplicationController
     if current_user
       redirect_to root_path
     end
+  end
+
+  def home_page
 
   end
 

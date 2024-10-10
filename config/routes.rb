@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   root "pages#stub_page"
   get "landing" => "pages#landing_page"
   get "test" => "sponsors#test_route"
+  get "home" => "pages#home_page"
 
   namespace :api do
     namespace :v1 do
