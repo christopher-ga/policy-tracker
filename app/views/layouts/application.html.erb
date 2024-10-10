@@ -11,18 +11,19 @@
 </head>
 
 <body>
-<%= render "layouts/flash" %>
-<%= link_to "See users", users_path %>
 
-<% if current_user %>
-  Signed in as <%= link_to current_user.email, user_path(current_user) %>
-  <%= link_to "Sign out", session_path, method: :delete, class: "button" %>
-<% else %>
-  <%= link_to "Sign up", new_user_path %>
-  <%= link_to "Sign in", new_session_path %>
-<% end %>
+<%= render "layouts/top_nav_bar" %>
 
 
-<%= yield %>
+<div class="container">
+
+  <%= render "layouts/side_navigation_html" %>
+
+  <div class="content">
+    <%= yield %>
+  </div>
+
+</div>
+
 </body>
 </html>
