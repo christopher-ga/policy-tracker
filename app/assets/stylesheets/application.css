@@ -162,6 +162,7 @@ body {
     padding: 20px;
     border: solid 1px #aeaeae;
     cursor: pointer;
+    height: 280px;
 }
 
 .bill-wrapper:hover {
@@ -170,6 +171,7 @@ body {
 
 .bill-info {
 
+    width: 100%;
 }
 
 .bill-number {

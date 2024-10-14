@@ -5,12 +5,16 @@ Rails.application.routes.draw do
   get "landing" => "pages#landing_page"
   get "test" => "sponsors#test_route"
   get "home" => "pages#home_page"
+  get "search" => "pages#search_page"
+
 
   namespace :api do
     namespace :v1 do
       get "user_bills", to: "user_saved_bills#index"
-      resources :bills, only: [:index, :create] do
+      resources :bills, only: [:create] do
         collection do
+          get "" => "bills#gov_collection"
+          post "search" => "bills#gov_search"
           get 'congress_bills', to: 'bills#congress_bills'
           post 'congress_bills', to: 'bills#congress_bill'
           post 'congress_sponsor', to: 'bills#congress_sponsor'

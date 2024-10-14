@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react"
 import BillBannerComponent from "./BillBannerComponent"
-import {batchFetchBillData, batchFetchSponsorImage, fetchBillsData} from "../services/congressionalApiService";
-import {fetchUserBills} from "../services/billService";
+import SearchComponent from "./SearchComponent";
 
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
 
@@ -13,24 +12,12 @@ const Bill = () => {
 
         const fetchBills = async () => {
 
-            const billsArray = await fetchBillsData();
-            await batchFetchBillData(billsArray);
-            await batchFetchSponsorImage(billsArray);
-            const userSavedBills = await fetchUserBills();
-            console.log(userSavedBills);
-            const billsObject = {}
+            const bills = await fetch("/api/v1/bills")
+            const data = await bills.json();
+            console.log(data)
 
-            billsArray.forEach((bill) => {
-                billsObject[`${bill.number}_${bill.type}`] = {...bill}
-            });
 
-            for (const bill of userSavedBills) {
-                if (`${bill.bill_id}_${bill.bill_type}` in billsObject) {
-                    billsObject[`${bill.bill_id}_${bill.bill_type}`].saved = true;
-                }
-            }
-
-            setBills(Object.values(billsObject));
+            setBills(Object.values(data));
         };
 
         fetchBills();
@@ -39,6 +26,7 @@ const Bill = () => {
 
     return (
         <>
+            <SearchComponent setBills={setBills}></SearchComponent>
             <p>bill component</p>
             {bills.map((e) => <BillBannerComponent key={e.number} bill={e}/>)}
         </>

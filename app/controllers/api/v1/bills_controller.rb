@@ -5,6 +5,10 @@ class Api::V1::BillsController < ApplicationController
 
   end
 
+  def show
+
+  end
+
   def create
     @bill = Bill.find_or_create_by(bill_id: bill_parameters[:bill_id], bill_type: bill_parameters[:bill_type]) do |bill|
       bill.assign_attributes(bill_parameters)
@@ -19,24 +23,15 @@ class Api::V1::BillsController < ApplicationController
     end
   end
 
-  def congress_bills
-    response = Faraday.get("https://api.congress.gov/v3/bill?api_key=#{@api_key}")
-    render json: JSON.parse(response.body)
-  end
-
-  def congress_bill
-    url = params[:url] + "&api_key=#{@api_key}"
-    response = Faraday.get(url)
-    render json: JSON.parse(response.body)
-  end
-
-  def congress_bills_search
+  def gov_search
+    api_key = "aMy5ZJ4W9ZPka4OEBDQTtpS0vfH1bUsIffHRqL53"
     congress = "118"
     collection_type = "BILLS"
     search_terms = params[:searchTerms]
+
     query = "collection:#{collection_type} congress:#{congress} #{search_terms}"
 
-    response = Faraday.post("https://api.govinfo.gov/search?api_key=#{@api_key}") do |req|
+    response = Faraday.post("https://api.govinfo.gov/search?api_key=#{api_key}") do |req|
       req.headers['Content-Type'] = 'application/json'
       req.body = {
         query: query,
@@ -53,92 +48,129 @@ class Api::V1::BillsController < ApplicationController
       }.to_json
     end
 
-    if response.success?
-      render json: JSON.parse(response.body)
-    else
-      render json: { error: "Request failed", status: response.status }, status: :unprocessable_entity
+    unless response.success?
+      render json: { error: "Request failed", status: response.status }, status: :unprocessable_entity and return
     end
 
+    data = JSON.parse(response.body, symbolize_names: true)
+    bills_from_api = data[:results]
+
+    bills = []
+    bills_from_api.each do |bill_data|
+      package_id = bill_data[:packageId]
+      existing_bill = Bill.find_by(package_id: package_id)
+
+      if existing_bill
+        bills << existing_bill.as_json(include: :sponsors)
+      else
+        bill = fetch_bill_details(bill_data)
+        bills << bill.as_json(include: :sponsors)
+      end
+    end
+
+    render json: bills
+
+  end
+  def gov_collection
+    api_key = "aMy5ZJ4W9ZPka4OEBDQTtpS0vfH1bUsIffHRqL53"
+
+    api_url = "https://api.govinfo.gov/collections/BILLS/2018-01-28T20%3A18%3A10Z?offset=0&pageSize=10&api_key=#{api_key}"
+
+    response = Faraday.get(api_url)
+
+    unless response.success?
+      render json: { error: "Request failed", status: response.status }, status: :unprocessable_entity and return
+    end
+
+    data = JSON.parse(response.body, symbolize_names: true)
+    bills_from_api = data[:packages]
+
+    bills = []
+
+    bills_from_api.each do |bill_data|
+      package_id = bill_data[:packageId]
+      existing_bill = Bill.find_by(package_id: package_id)
+
+      if existing_bill
+        bills << existing_bill.as_json(include: :sponsors)
+      else
+        bill = fetch_bill_details(bill_data)
+        bills << bill.as_json(include: :sponsors)
+      end
+    end
+
+    render json: bills
   end
 
-  def test_route
-    test_bill = {
-      firstName: "test",
-      fullName: "test",
-      party: "test",
-      state: "test",
-      last_name: "test",
-      bioguideId: "Y000064"
-    }
-
-    sponsor = fetch_bill_sponsor_information(test_bill)
-    render plain: "Sponsor info: #{sponsor}"
-
-  end
 
   private
-
-  def fetch_bill_sponsor_information(bill)
-    sponsor_data = {
-      first_name: bill.sponsors.firstName,
-      full_title: bill.sponsors.fullName,
-      party: bill.sponsors.party,
-      state: bill.sponsors.state,
-      last_name: bill.sponsors.lastName,
-      bioguide_id: bill.sponsors.bioguideId
-    }
-
-    url = "https://api.congress.gov/v3/member/#{bill.sponsors[0].bioguideId}?api_key=#{@api_key}"
-    response = Faraday.get(url)
-    data = JSON.parse(response.body)
-
-    sponsor_data.image_url = data.member.depiction.imageUrl
-    sponsor_data.member_type = data.member.terms[-1].memberType
-
-    Sponsor.create(sponsor_data)
-
-    bill_record = Bill.find(bill_id: bill.bill_id)
-    BillSponsor.create(bill: bill_record, sponsor: sponsor)
-
-    puts sponsor
-    sponsor
-  end
 
   def set_api_key
     @api_key = Rails.application.credentials.congress_api_key
   end
 
-  def bill_parameters
-    bill_params = params.require(:bill).permit(
-      :id,
-      :title,
-      :bill_id,
-      :introduced_date,
-      :update_date,
-      :congress,
-      :bill_type,
-      :bill_url,
-      :latest_action,
-      :sponsor_first_name,
-      :sponsor_last_name,
-      :sponsor_party,
-      :sponsor_state,
-      :sponsor_url
+  def fetch_bill_details(bill_data)
+    api_key = @api_key
+    package_id = bill_data[:packageId]
+
+    bill = Bill.new(
+      package_id: package_id,
+      update_date: bill_data[:lastModified],
+      congress: bill_data[:congress],
+      date_issued: bill_data[:dateIssued],
+      short_title: bill_data[:title]
     )
+
+    summary_url = "https://api.govinfo.gov/packages/#{package_id}/summary?api_key=#{api_key}"
+    summary_response = Faraday.get(summary_url)
+    summary_data = JSON.parse(summary_response.body, symbolize_names: true)
+
+    bill.bill_number = summary_data[:billNumber]
+    bill.title = summary_data[:title]
+    bill.bill_type = summary_data[:billType]
+
+    latest_action_url = "https://api.congress.gov/v3/bill/118/#{bill.bill_type}/#{bill.bill_number}?api_key=#{api_key}"
+    latest_action_response = Faraday.get(latest_action_url)
+    latest_action_data = JSON.parse(latest_action_response.body, symbolize_names: true)
+
+    puts "LOOK HERE", latest_action_data
+    bill.latest_action_date = latest_action_data.dig(:bill, :latestAction, :actionDate)
+    bill.latest_action_text = latest_action_data.dig(:bill, :latestAction, :text)
+
+    if summary_data[:members]&.any?
+      member_data = summary_data[:members].first
+      sponsor = process_sponsor(member_data)
+      bill.sponsors << sponsor unless bill.sponsors.include?(sponsor)
+    end
+
+    bill.save
+    bill
   end
 
-  def sponsor_parameters
-    sponsor_params = params.require(:sponsor).permit(
-      :id,
-      :first_name,
-      :last_name,
-      :full_title,
-      :party,
-      :state,
-      :bioguide_id,
-      :image_url,
-      :member_type
-    )
+  def process_sponsor(member_data)
+    api_key = @api_key
+    bio_guide_id = member_data[:bioGuideId]
+    sponsor = Sponsor.find_by(bio_guide_id: bio_guide_id)
+
+    unless sponsor
+      sponsor = Sponsor.new(
+        state: member_data[:state],
+        party: member_data[:party],
+        bio_guide_id: bio_guide_id,
+        full_title: member_data[:fullName]
+      )
+
+      sponsor_url = "https://api.congress.gov/v3/member/#{bio_guide_id}?format=json&api_key=#{api_key}"
+      sponsor_response = Faraday.get(sponsor_url)
+      sponsor_data = JSON.parse(sponsor_response.body, symbolize_names: true)
+
+      sponsor.image_url = sponsor_data.dig(:member, :depiction, :imageUrl)
+      sponsor.first_name = sponsor_data.dig(:member, :firstName)
+      sponsor.last_name = sponsor_data.dig(:member, :lastName)
+      sponsor.save
+    end
+
+    sponsor
   end
 end
 

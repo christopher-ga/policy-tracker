@@ -10,12 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_08_212954) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_14_023703) do
   create_table "bill_sponsors", force: :cascade do |t|
     t.integer "bill_id", null: false
     t.integer "sponsor_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["bill_id", "sponsor_id"], name: "index_bill_sponsors_on_bill_id_and_sponsor_id", unique: true
     t.index ["bill_id"], name: "index_bill_sponsors_on_bill_id"
     t.index ["sponsor_id"], name: "index_bill_sponsors_on_sponsor_id"
   end
@@ -23,17 +24,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_08_212954) do
   create_table "bills", force: :cascade do |t|
     t.string "title"
     t.string "bill_id"
-    t.datetime "introduced_date", null: false
     t.datetime "update_date", null: false
     t.string "congress"
     t.string "bill_type"
-    t.string "bill_url"
     t.string "latest_action"
-    t.string "sponsor_first_name"
-    t.string "sponsor_last_name"
-    t.string "sponsor_party"
-    t.string "sponsor_state"
-    t.text "sponsor_url"
+    t.string "package_id"
+    t.date "date_issued"
+    t.string "short_title"
+    t.string "bill_number"
+    t.date "latest_action_date"
+    t.text "latest_action_text"
   end
 
   create_table "saved_bills", force: :cascade do |t|
@@ -51,7 +51,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_08_212954) do
     t.string "state"
     t.string "last_name"
     t.string "member_type"
-    t.string "bioguide_id"
+    t.string "bio_guide_id"
     t.string "image_url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

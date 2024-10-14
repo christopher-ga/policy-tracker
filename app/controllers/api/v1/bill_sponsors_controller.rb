@@ -1,2 +1,6 @@
-class BillSponsorsController < ApplicationController
+class Api::V1::BillSponsorsController < ApplicationController
+
 end
+
+
+

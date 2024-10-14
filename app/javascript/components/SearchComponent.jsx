@@ -1,15 +1,23 @@
-import {searchForBills} from "../services/congressionalApiService";
 import React, {useState} from "react";
-import BillBannerComponent from "./BillBannerComponent";
+import {csrfToken} from "../utils/csrf";
 
-const SearchComponent = () => {
+const SearchComponent = ({setBills}) => {
 
-    const [bills, setBills] = useState([])
     const [searchTerms, setSearchTerms] = useState('')
 
     const handleSearch = async () => {
-        const billsArray = await searchForBills(searchTerms)
-        setBills(billsArray.results)
+        const bills = await fetch("api/v1/bills/search", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": csrfToken
+            },
+            body: JSON.stringify({searchTerms})
+        })
+        const data = await bills.json();
+
+        console.log(data);
+        setBills(data)
     }
 
     const handleSearchTerms = (e) => {
@@ -18,13 +26,14 @@ const SearchComponent = () => {
 
     return (
         <>
-            <input type="text"
-                   value={searchTerms}
-                   onChange={handleSearchTerms}
-            />
-            <button onClick={handleSearch}>click to test search function</button>
-            {bills.map((e) => <BillBannerComponent key={e.packageId} bill={e}></BillBannerComponent>)}
-
+            <div className="search-container">
+                <input type="text"
+                       value={searchTerms}
+                       className="search-bar"
+                       onChange={handleSearchTerms}
+                />
+                <button onClick={handleSearch} className="search-btn">Search</button>
+            </div>
         </>
     )
 }
