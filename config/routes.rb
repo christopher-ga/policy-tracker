@@ -11,6 +11,9 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       get "user_bills", to: "user_saved_bills#index"
+      post "user_bills", to: "user_saved_bills#create"
+      delete "user_bills", to: "user_saved_bills#destroy"
+
       resources :bills, only: [:create] do
         collection do
           get "" => "bills#gov_collection"

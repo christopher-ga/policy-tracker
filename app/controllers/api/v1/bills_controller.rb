@@ -24,14 +24,13 @@ class Api::V1::BillsController < ApplicationController
   end
 
   def gov_search
-    api_key = "aMy5ZJ4W9ZPka4OEBDQTtpS0vfH1bUsIffHRqL53"
     congress = "118"
     collection_type = "BILLS"
     search_terms = params[:searchTerms]
 
     query = "collection:#{collection_type} congress:#{congress} #{search_terms}"
 
-    response = Faraday.post("https://api.govinfo.gov/search?api_key=#{api_key}") do |req|
+    response = Faraday.post("https://api.govinfo.gov/search?api_key=#{@api_key}") do |req|
       req.headers['Content-Type'] = 'application/json'
       req.body = {
         query: query,
@@ -55,16 +54,19 @@ class Api::V1::BillsController < ApplicationController
     data = JSON.parse(response.body, symbolize_names: true)
     bills_from_api = data[:results]
 
+
+    saved_user_bills = current_user.user_saved_bills.joins(:bill).pluck('bills.package_id')
+
     bills = []
     bills_from_api.each do |bill_data|
       package_id = bill_data[:packageId]
       existing_bill = Bill.find_by(package_id: package_id)
 
       if existing_bill
-        bills << existing_bill.as_json(include: :sponsors)
+        bills << existing_bill.as_json(include: :sponsors).merge(saved: saved_user_bills.include?(package_id))
       else
         bill = fetch_bill_details(bill_data)
-        bills << bill.as_json(include: :sponsors)
+        bills << bill.as_json(include: :sponsors).merge(saved: saved_user_bills.include?(package_id))
       end
     end
 
@@ -72,9 +74,8 @@ class Api::V1::BillsController < ApplicationController
 
   end
   def gov_collection
-    api_key = "aMy5ZJ4W9ZPka4OEBDQTtpS0vfH1bUsIffHRqL53"
 
-    api_url = "https://api.govinfo.gov/collections/BILLS/2018-01-28T20%3A18%3A10Z?offset=0&pageSize=10&api_key=#{api_key}"
+    api_url = "https://api.govinfo.gov/collections/BILLS/2018-01-28T20%3A18%3A10Z?offset=0&pageSize=10&api_key=#{@api_key}"
 
     response = Faraday.get(api_url)
 
@@ -87,15 +88,17 @@ class Api::V1::BillsController < ApplicationController
 
     bills = []
 
+    saved_user_bills = current_user.user_saved_bills.joins(:bill).pluck('bills.package_id')
+
     bills_from_api.each do |bill_data|
       package_id = bill_data[:packageId]
       existing_bill = Bill.find_by(package_id: package_id)
 
       if existing_bill
-        bills << existing_bill.as_json(include: :sponsors)
+        bills << existing_bill.as_json(include: :sponsors).merge(saved: saved_user_bills.include?(package_id))
       else
         bill = fetch_bill_details(bill_data)
-        bills << bill.as_json(include: :sponsors)
+        bills << bill.as_json(include: :sponsors).merge(saved: saved_user_bills.include?(package_id))
       end
     end
 
@@ -172,6 +175,8 @@ class Api::V1::BillsController < ApplicationController
 
     sponsor
   end
+
+
 end
 
 

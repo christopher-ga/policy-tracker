@@ -1,20 +1,29 @@
 import React, {useEffect, useState} from "react"
-import {userSaveBill} from "../services/billService";
+import {stopTracking, userSaveBill} from "../services/billService";
 
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
 
 const BillBannerComponent = ({bill}) => {
 
-    const [isSaved, setIsSaved] = useState(bill.saved)
+    const [isSaved, setIsSaved] = useState(() => bill.saved)
+
+    useEffect(() => {
+        setIsSaved(bill.saved);
+    }, [bill]);
 
     const handleSaveBill = async () => {
        await userSaveBill(bill);
+       setIsSaved(true)
+    }
+
+    const stopTrackingBill = async () => {
+        await stopTracking(bill);
+        setIsSaved(false);
     }
 
     const dateUpdated = new Date(bill.update_date).toLocaleDateString("en-US");
-
     const actionDate = new Date(bill.latest_action_date).toLocaleDateString("en-US");
-
+    console.log(bill);
 
     return (
         <>
@@ -35,8 +44,8 @@ const BillBannerComponent = ({bill}) => {
                         <p className="truncate">{bill.latest_action_text}</p>
                     </section>
 
-                    <button className="track-btn btn-dark">TRACK BILL</button>
-                    <button className="track-btn btn-dark">STOP TRACKING BILL</button>
+                    {isSaved ? ( <button onClick={stopTrackingBill} className="track-btn btn-dark">STOP TRACKING BILL</button>) : (
+                        <button onClick={handleSaveBill} className="track-btn btn-dark">TRACK BILL</button>)}
                 </section>
 
                 <div className="image-wrapper">
