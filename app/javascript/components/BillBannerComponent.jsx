@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react"
 import {stopTracking, userSaveBill} from "../services/billService";
 
-const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
 
 const BillBannerComponent = ({bill}) => {
 
@@ -11,12 +10,18 @@ const BillBannerComponent = ({bill}) => {
         setIsSaved(bill.saved);
     }, [bill]);
 
-    const handleSaveBill = async () => {
+    const handleBillClick = () => {
+        window.location.href = `/api/v1/bills/${bill.id}`;
+    }
+
+    const handleSaveBill = async (e) => {
+        e.stopPropagation()
        await userSaveBill(bill);
        setIsSaved(true)
     }
 
-    const stopTrackingBill = async () => {
+    const stopTrackingBill = async (e) => {
+        e.stopPropagation()
         await stopTracking(bill);
         setIsSaved(false);
     }
@@ -27,7 +32,7 @@ const BillBannerComponent = ({bill}) => {
 
     return (
         <>
-            <div className="bill-wrapper">
+            <div onClick={handleBillClick} className="bill-wrapper">
                 <section className="bill-info">
                     <div className="bill-number-date">
                         <p className="bill-number">{bill.bill_type.toUpperCase()

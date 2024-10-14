@@ -1,7 +1,13 @@
 class Api::V1::UserSavedBillsController < ApplicationController
+
   def index
-    @saved_bills = current_user.bills
-    render json: @saved_bills, status: :ok
+    @saved_bills = current_user.bills.includes(:sponsors)
+
+    bills_with_sponsors = @saved_bills.map do |bill|
+      bill.as_json(include: :sponsors).merge(saved: true)
+    end
+
+    render json: bills_with_sponsors, status: :ok
   end
 
   def create

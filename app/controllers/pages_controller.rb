@@ -15,9 +15,12 @@ class PagesController < ApplicationController
     end
   end
 
+  def my_bills_page
+    @on_my_bills =true
+  end
+
   def home_page
     @on_home = true
-
   end
 
   def search_page

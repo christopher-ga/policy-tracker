@@ -1,6 +1,6 @@
 class Api::V1::BillsController < ApplicationController
 
-  before_action :set_api_key
+  before_action :set_api_key, :set_current_user
   def index
 
   end
@@ -54,10 +54,10 @@ class Api::V1::BillsController < ApplicationController
     data = JSON.parse(response.body, symbolize_names: true)
     bills_from_api = data[:results]
 
-
     saved_user_bills = current_user.user_saved_bills.joins(:bill).pluck('bills.package_id')
 
     bills = []
+
     bills_from_api.each do |bill_data|
       package_id = bill_data[:packageId]
       existing_bill = Bill.find_by(package_id: package_id)
@@ -176,8 +176,12 @@ class Api::V1::BillsController < ApplicationController
     sponsor
   end
 
+  private
+
+  def set_current_user
+    if current_user
+      @user = current_user
+    end
+  end
 
 end
-
-
-

@@ -1,11 +1,12 @@
 # config/routes.rb
 Rails.application.routes.draw do
 
-  root "pages#stub_page"
+  root "pages#search_page"
   get "landing" => "pages#landing_page"
   get "test" => "sponsors#test_route"
   get "home" => "pages#home_page"
   get "search" => "pages#search_page"
+  get "mybills" => "pages#my_bills_page"
 
 
   namespace :api do
@@ -14,7 +15,7 @@ Rails.application.routes.draw do
       post "user_bills", to: "user_saved_bills#create"
       delete "user_bills", to: "user_saved_bills#destroy"
 
-      resources :bills, only: [:create] do
+      resources :bills, only: [:create, :show] do
         collection do
           get "" => "bills#gov_collection"
           post "search" => "bills#gov_search"

@@ -2,16 +2,16 @@
   <%= @user.email %>
   <div class="home sticky-side <%= 'active-page' if @on_home %>">
     <%= image_tag "home-icon.png" %>
-    <p>Home</p>
+    <%= link_to "Home", home_path %>
   </div>
 
   <div class="search sticky-side2 <%= 'active-page' if @on_search %>">
     <%= image_tag "binoculars-icon.png" %>
-    <p>Search</p>
+    <%= link_to "Search", search_path %>
   </div>
 
   <div class="my-bills sticky-side3  <%= 'active-page' if @on_bills %>">
     <%= image_tag "bill-icon.png" %>
-    <p>My Bills</p>
+    <%= link_to "My Bills", mybills_path %>
   </div>
 </div>
