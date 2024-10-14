@@ -26,7 +26,7 @@ const Bill = () => {
 
     return (
         <>
-            <p>bill component</p>
+            <SearchComponent setBills={setBills}></SearchComponent>
             {bills.map((e) => <BillBannerComponent key={e.number} bill={e}/>)}
         </>
     );
