@@ -4,4 +4,19 @@ class Api::V1::UserSavedBillsController < ApplicationController
     render json: @saved_bills, status: :ok
   end
 
+  def create
+    bill = Bill.find_by(package_id: params[:package_id])
+    if bill.nil?
+      render json: {error: "Bill not found"}, status: :not_found
+      return
+    end
+
+    saved_bill = current_user.user_saved_bills.find_or_create_by(bill: bill)
+
+    if saved_bill.persisted?
+      render json: { message: "Bill saved successfully", bill: bill }, status: :created
+    else
+      render json: { error: "Failed to save bill" }, status: :unprocessable_entity
+    end
+  end
 end

@@ -1,15 +1,16 @@
 <div class="sidebar">
-  <div class="home">
+  <%= @user.email %>
+  <div class="home  <%= 'active-page' if @on_home %>">
     <%= image_tag "home-icon.png" %>
     <p>Home</p>
   </div>
 
-  <div class="search">
+  <div class="search <%= 'active-page' if @on_search %>">
     <%= image_tag "binoculars-icon.png" %>
     <p>Search</p>
   </div>
 
-  <div class="my-bills">
+  <div class="my-bills  <%= 'active-page' if @on_bills %>">
     <%= image_tag "bill-icon.png" %>
     <p>My Bills</p>
   </div>

@@ -47,10 +47,14 @@ body {
     padding: 10px;
     font-size: 19px;
     border: none;
+    background-color: #A3A6AF;
     color: white;
     cursor: pointer;
     transition: 0.5s;
+    text-decoration: none;
+    display: inline-block;
 }
+
 
 .sign-out-btn:hover {
     background-color: #1171cf;
@@ -100,6 +104,11 @@ body {
     transition: 0.5s;
 }
 
+.active-page {
+    background-color: #e7f2f6;
+    color: #1171cf;
+}
+
 .home {
     margin-top: 40px;
 }
@@ -124,7 +133,7 @@ body {
     width: 100%;
     display: flex;
     margin: 20px;
-    padding: 20px;
+    padding: 40px;
     justify-content: center;
     border-bottom: solid 1px #b8b8b8;
     gap: 30px;
