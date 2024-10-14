@@ -31,6 +31,27 @@ body {
     min-height: 100vh;
 }
 
+.sticky {
+    position: sticky;
+    top: 0;
+    background-color: white;
+}
+
+.sticky-side {
+    position: sticky;
+    top: 80px;
+}
+
+.sticky-side2 {
+    position: sticky;
+    top: 190px;
+}
+
+.sticky-side3 {
+    position: sticky;
+    top: 300px;
+}
+
 .navbar {
     color: #fff;
     height: 60px;
@@ -125,15 +146,14 @@ body {
 .content {
     display: flex;
     height: 100%;
-    align-items: center;
+
     flex-direction: column;
 }
 
 .search-container {
-    width: 100%;
     display: flex;
-    margin: 20px;
-    padding: 40px;
+    padding: 30px;
+    width: 100%;
     justify-content: center;
     border-bottom: solid 1px #b8b8b8;
     gap: 30px;
@@ -167,11 +187,13 @@ body {
     display: flex;
     width: 95%;
     max-width: 1200px;
-    margin: 20px;
+    margin: 30px auto;
     padding: 20px;
+
     border: solid 1px #aeaeae;
     cursor: pointer;
     height: 280px;
+
 }
 
 .bill-wrapper:hover {

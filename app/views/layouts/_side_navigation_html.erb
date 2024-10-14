@@ -1,16 +1,16 @@
 <div class="sidebar">
   <%= @user.email %>
-  <div class="home  <%= 'active-page' if @on_home %>">
+  <div class="home sticky-side <%= 'active-page' if @on_home %>">
     <%= image_tag "home-icon.png" %>
     <p>Home</p>
   </div>
 
-  <div class="search <%= 'active-page' if @on_search %>">
+  <div class="search sticky-side2 <%= 'active-page' if @on_search %>">
     <%= image_tag "binoculars-icon.png" %>
     <p>Search</p>
   </div>
 
-  <div class="my-bills  <%= 'active-page' if @on_bills %>">
+  <div class="my-bills sticky-side3  <%= 'active-page' if @on_bills %>">
     <%= image_tag "bill-icon.png" %>
     <p>My Bills</p>
   </div>
