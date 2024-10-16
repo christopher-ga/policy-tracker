@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from "react"
 import BillBannerComponent from "./BillBannerComponent"
 
-const Bill = () => {
+const MyBillsComponent = () => {
 
     const [bills, setBills] = useState([])
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
 
@@ -14,19 +15,24 @@ const Bill = () => {
             console.log(data)
 
             setBills(Object.values(data));
+            setLoading(false);
         };
 
         fetchBills();
+
 
     }, []);
 
     return (
         <>
-            <h2>Currently Tracking</h2>
+            <section className="header-container">
+                <h2>Currently Tracking</h2>
+            </section>
 
-            {bills.map((e) => <BillBannerComponent key={e.number} bill={e}/>)}
+            {loading ? (<div className="loader"></div>) : ( bills.map((e) => <BillBannerComponent key={e.id} bill={e}/>))}
+
         </>
     );
 }
 
-export default Bill;
+export default MyBillsComponent;

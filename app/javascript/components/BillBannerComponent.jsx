@@ -11,7 +11,7 @@ const BillBannerComponent = ({bill}) => {
     }, [bill]);
 
     const handleBillClick = () => {
-        window.location.href = `/api/v1/bills/${bill.id}`;
+        window.location.href = `/api/v1/bills/${bill.package_id}`;
     }
 
     const handleSaveBill = async (e) => {
@@ -24,15 +24,17 @@ const BillBannerComponent = ({bill}) => {
         e.stopPropagation()
         await stopTracking(bill);
         setIsSaved(false);
+        bill.changed = false
     }
 
     const dateUpdated = new Date(bill.update_date).toLocaleDateString("en-US");
     const actionDate = new Date(bill.latest_action_date).toLocaleDateString("en-US");
     console.log(bill);
+    console.log(bill.changed)
 
     return (
         <>
-            <div onClick={handleBillClick} className="bill-wrapper">
+            <div onClick={handleBillClick} className={`bill-wrapper ${bill.changed ? 'bill-update': ""}`}>
                 <section className="bill-info">
                     <div className="bill-number-date">
                         <p className="bill-number">{bill.bill_type.toUpperCase()

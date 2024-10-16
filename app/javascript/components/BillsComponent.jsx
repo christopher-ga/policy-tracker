@@ -7,6 +7,7 @@ const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute
 const Bill = () => {
 
     const [bills, setBills] = useState([])
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
 
@@ -14,20 +15,19 @@ const Bill = () => {
 
             const bills = await fetch("/api/v1/bills")
             const data = await bills.json();
-            console.log(data)
-
-
             setBills(Object.values(data));
+            setLoading(false)
         };
 
         fetchBills();
+
 
     }, []);
 
     return (
         <>
-            <SearchComponent setBills={setBills}></SearchComponent>
-            {bills.map((e) => <BillBannerComponent key={e.number} bill={e}/>)}
+            <SearchComponent isLoading={setLoading} setBills={setBills}></SearchComponent>
+            {loading ? (<div className="loader"></div>) : ( bills.map((e) => <BillBannerComponent key={e.id} bill={e}/>))}
         </>
     );
 }

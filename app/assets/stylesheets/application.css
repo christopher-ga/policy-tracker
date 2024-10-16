@@ -44,12 +44,12 @@ body {
 
 .sticky-side2 {
     position: sticky;
-    top: 190px;
+    top: 120px;
 }
 
 .sticky-side3 {
     position: sticky;
-    top: 300px;
+    top: 230px;
 }
 
 .navbar {
@@ -83,6 +83,7 @@ body {
 
 .logo {
     margin-left: 50px;
+    margin-top: 5px;
 }
 
 
@@ -133,6 +134,11 @@ body {
     margin-top: 40px;
 }
 
+.sidebar a {
+    text-decoration: none;
+    color: black
+}
+
 .sidebar p {
     font-size: 20px;
 }
@@ -156,7 +162,6 @@ body {
     justify-content: center;
     border-bottom: solid 1px #b8b8b8;
     gap: 30px;
-
 }
 
 .search-btn {
@@ -188,10 +193,14 @@ body {
     max-width: 1200px;
     margin: 30px auto;
     padding: 20px;
-
     border: solid 1px #aeaeae;
     cursor: pointer;
     height: 250px;
+}
+
+.bill-update {
+
+    background-color: #c8eac8;
 }
 
 .bill-wrapper:hover {
@@ -298,4 +307,42 @@ body {
     height: 80px;
     border-radius: 50%;
     object-fit: cover;
+}
+
+.header-container {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.header-container h2 {
+    font-size: 30px;
+}
+
+
+.loader {
+    margin: 200px auto;
+    width: 50px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 8px solid;
+    border-color: #000 #0000;
+    animation: l1 1s infinite;
+}
+@keyframes l1 {to{transform: rotate(.5turn)}}
+
+.sign-out-elements {
+    color: black;
+    display: flex;
+    gap: 40px;
+    align-items: center;
+}
+
+.show-bill-container {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    margin: 30px auto;
 }

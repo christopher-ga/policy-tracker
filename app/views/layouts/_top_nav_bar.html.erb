@@ -3,5 +3,8 @@
     <h1><span class="logo-start">POLICY</span><span class="logo-end">WATCH</span></h1>
   </div>
 
+  <div class="sign-out-elements">
+    <%= @user.email %>
     <%= link_to "Sign out", session_path, method: :delete, class: "sign-out-btn" %>
+  </div>
 </nav>

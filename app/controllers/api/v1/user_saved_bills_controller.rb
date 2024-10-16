@@ -3,8 +3,18 @@ class Api::V1::UserSavedBillsController < ApplicationController
   def index
     @saved_bills = current_user.bills.includes(:sponsors)
 
+
+
     bills_with_sponsors = @saved_bills.map do |bill|
-      bill.as_json(include: :sponsors).merge(saved: true)
+      last_view = UserBillView.find_by(user: current_user, bill: bill)
+
+      changed = if last_view
+                  bill.update_date > last_view.last_viewed_at
+                else
+                  true
+                end
+
+      bill.as_json(include: :sponsors).merge(saved: true, changed: changed)
     end
 
     render json: bills_with_sponsors, status: :ok
@@ -18,6 +28,7 @@ class Api::V1::UserSavedBillsController < ApplicationController
       return
     end
 
+    UserBillView.find_or_create_by(user: current_user, bill: bill).update(last_viewed_at: Time.current)
     saved_bill = current_user.user_saved_bills.find_or_create_by(bill: bill)
 
     if saved_bill.persisted?
@@ -39,6 +50,7 @@ class Api::V1::UserSavedBillsController < ApplicationController
 
     if saved_bill
       saved_bill.destroy
+      UserBillView.find_by(user: current_user, bill: bill)&.destroy
       render json: { message: "Bill untracked successfully" }, status: :ok
     else
       render json: { error: "Bill not tracked by user" }, status: :not_found

@@ -1,17 +1,16 @@
 <div class="sidebar">
-  <%= @user.email %>
-  <div class="home sticky-side <%= 'active-page' if @on_home %>">
-    <%= image_tag "home-icon.png" %>
-    <%= link_to "Home", home_path %>
-  </div>
+  <!--  <div class="home sticky-side <%#= 'active-page' if @on_home %>">-->
+  <%#= image_tag "home-icon.png" %>
+  <%#= link_to "Home", home_path %>
+  <!--  </div>-->
 
-  <div class="search sticky-side2 <%= 'active-page' if @on_search %>">
+  <div class="search sticky-side2 <%= 'active-page' if @on_search %>" onclick="window.location='<%= search_path %>'">
     <%= image_tag "binoculars-icon.png" %>
-    <%= link_to "Search", search_path %>
+    <p>Search</p>
   </div>
 
-  <div class="my-bills sticky-side3  <%= 'active-page' if @on_bills %>">
+  <div class="my-bills sticky-side3 <%= 'active-page' if @on_bills %>" onclick="window.location='<%= mybills_path %>'" style="cursor: pointer;">
     <%= image_tag "bill-icon.png" %>
-    <%= link_to "My Bills", mybills_path %>
+    <p>My Bills</p>
   </div>
 </div>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_14_183153) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_14_223129) do
   create_table "bill_sponsors", force: :cascade do |t|
     t.integer "bill_id", null: false
     t.integer "sponsor_id", null: false
@@ -58,6 +58,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_14_183153) do
     t.string "full_title"
   end
 
+  create_table "user_bill_views", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "bill_id", null: false
+    t.datetime "last_viewed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["bill_id"], name: "index_user_bill_views_on_bill_id"
+    t.index ["user_id"], name: "index_user_bill_views_on_user_id"
+  end
+
   create_table "user_saved_bills", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "bill_id", null: false
@@ -78,6 +88,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_14_183153) do
   add_foreign_key "bill_sponsors", "sponsors"
   add_foreign_key "saved_bills", "bills"
   add_foreign_key "saved_bills", "users"
+  add_foreign_key "user_bill_views", "bills"
+  add_foreign_key "user_bill_views", "users"
   add_foreign_key "user_saved_bills", "bills"
   add_foreign_key "user_saved_bills", "users"
 end

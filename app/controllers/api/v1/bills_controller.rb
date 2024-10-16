@@ -6,6 +6,21 @@ class Api::V1::BillsController < ApplicationController
   end
 
   def show
+    bill = Bill.find_by(package_id: params[:id])
+
+    if bill.nil?
+      render json: { error: 'Bill not found' }, status: :not_found and return
+    end
+
+    user_saved_bill = current_user.user_saved_bills.find_by(bill: bill)
+
+    if user_saved_bill
+      user_bill_view = UserBillView.find_or_initialize_by(user: current_user, bill: bill)
+      user_bill_view.update(last_viewed_at: Time.current)
+    end
+
+    @bill = bill
+    @saved = user_saved_bill.present?
 
   end
 
@@ -27,6 +42,7 @@ class Api::V1::BillsController < ApplicationController
     congress = "118"
     collection_type = "BILLS"
     search_terms = params[:searchTerms]
+    sort_order = params[:sortOrder]
 
     query = "collection:#{collection_type} congress:#{congress} #{search_terms}"
 
@@ -39,7 +55,7 @@ class Api::V1::BillsController < ApplicationController
         sorts: [
           {
             field: "relevancy",
-            sortOrder: "DESC"
+            sortOrder: sort_order
           }
         ],
         historical: true,
@@ -62,11 +78,22 @@ class Api::V1::BillsController < ApplicationController
       package_id = bill_data[:packageId]
       existing_bill = Bill.find_by(package_id: package_id)
 
-      if existing_bill
-        bills << existing_bill.as_json(include: :sponsors).merge(saved: saved_user_bills.include?(package_id))
+      if saved_user_bills.include?(package_id) && existing_bill
+        last_view = UserBillView.find_by(user: current_user, bill: existing_bill)
+
+        changed = if last_view
+                    existing_bill.update_date > last_view.last_viewed_at
+                  else
+                    true
+                  end
+
+        bills << existing_bill.as_json(include: :sponsors)
+                              .merge(saved: true, changed: changed)
+
       else
-        bill = fetch_bill_details(bill_data)
-        bills << bill.as_json(include: :sponsors).merge(saved: saved_user_bills.include?(package_id))
+
+        bill = existing_bill || fetch_bill_details(bill_data)
+        bills << bill.as_json(include: :sponsors).merge(saved: false)
       end
     end
 
@@ -74,6 +101,9 @@ class Api::V1::BillsController < ApplicationController
 
   end
   def gov_collection
+
+    existing_bill_197 = Bill.find_by(id: 197)
+    puts "Bill with ID 197 fetched: #{existing_bill_197.inspect}" if existing_bill_197
 
     api_url = "https://api.govinfo.gov/collections/BILLS/2018-01-28T20%3A18%3A10Z?offset=0&pageSize=10&api_key=#{@api_key}"
 
@@ -94,11 +124,26 @@ class Api::V1::BillsController < ApplicationController
       package_id = bill_data[:packageId]
       existing_bill = Bill.find_by(package_id: package_id)
 
-      if existing_bill
-        bills << existing_bill.as_json(include: :sponsors).merge(saved: saved_user_bills.include?(package_id))
+      if saved_user_bills.include?(package_id) && existing_bill
+        # update_bill_with_latest_action(existing_bill) - commented out for demonstration purposes
+        last_view = UserBillView.find_by(user: current_user, bill: existing_bill)
+        puts existing_bill.inspect
+        puts "Existing Bill Update Date: #{existing_bill.update_date}"
+        puts "Last Viewed At: #{last_view&.last_viewed_at}"
+        puts "Comparison Result: #{existing_bill.update_date > last_view.last_viewed_at}" if last_view
+        changed = if last_view
+                    existing_bill.update_date > last_view.last_viewed_at
+                  else
+                    true
+                  end
+
+        bills << existing_bill.as_json(include: :sponsors)
+                              .merge(saved: true, changed: changed)
+
       else
-        bill = fetch_bill_details(bill_data)
-        bills << bill.as_json(include: :sponsors).merge(saved: saved_user_bills.include?(package_id))
+
+        bill = existing_bill || fetch_bill_details(bill_data)
+        bills << bill.as_json(include: :sponsors).merge(saved: false)
       end
     end
 
@@ -176,11 +221,26 @@ class Api::V1::BillsController < ApplicationController
     sponsor
   end
 
-  private
-
   def set_current_user
     if current_user
       @user = current_user
+    end
+  end
+
+  def update_bill_with_latest_action(bill)
+    latest_action_url = "https://api.congress.gov/v3/bill/118/#{bill.bill_type}/#{bill.bill_number}?api_key=#{@api_key}"
+    latest_action_response = Faraday.get(latest_action_url)
+
+    if latest_action_response.success?
+      latest_action_data = JSON.parse(latest_action_response.body, symbolize_names: true)
+      bill.update(
+        latest_action_date: latest_action_data.dig(:bill, :latestAction, :actionDate),
+        latest_action_text: latest_action_data.dig(:bill, :latestAction, :text)
+      )
+      bill.update_date = bill.latest_action_date
+      bill.save
+    else
+      Rails.logger.warn("Failed to fetch latest action for bill #{bill.package_id}")
     end
   end
 
