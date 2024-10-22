@@ -346,3 +346,9 @@ body {
     flex-direction: column;
     margin: 30px auto;
 }
+
+.tracking-subscript {
+    font-size: 12px;
+    margin-top: 5px;
+    color: gray;
+}

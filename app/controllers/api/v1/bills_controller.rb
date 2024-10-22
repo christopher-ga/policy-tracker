@@ -17,6 +17,7 @@ class Api::V1::BillsController < ApplicationController
     if user_saved_bill
       user_bill_view = UserBillView.find_or_initialize_by(user: current_user, bill: bill)
       user_bill_view.update(last_viewed_at: Time.current)
+      @view = user_bill_view.last_viewed_at
     end
 
     @bill = bill
@@ -87,13 +88,18 @@ class Api::V1::BillsController < ApplicationController
                     true
                   end
 
+        tracking_count = UserSavedBill.where(bill: existing_bill).count
+
+
         bills << existing_bill.as_json(include: :sponsors)
-                              .merge(saved: true, changed: changed)
+                              .merge(saved: true, changed: changed,  tracking_count: tracking_count)
 
       else
 
         bill = existing_bill || fetch_bill_details(bill_data)
-        bills << bill.as_json(include: :sponsors).merge(saved: false)
+        tracking_count = Bill.exists?(package_id: package_id) ? UserSavedBill.where(bill: bill).count : 0
+
+        bills << bill.as_json(include: :sponsors).merge(saved: false,  tracking_count: tracking_count)
       end
     end
 
@@ -127,23 +133,24 @@ class Api::V1::BillsController < ApplicationController
       if saved_user_bills.include?(package_id) && existing_bill
         # update_bill_with_latest_action(existing_bill) - commented out for demonstration purposes
         last_view = UserBillView.find_by(user: current_user, bill: existing_bill)
-        puts existing_bill.inspect
-        puts "Existing Bill Update Date: #{existing_bill.update_date}"
-        puts "Last Viewed At: #{last_view&.last_viewed_at}"
-        puts "Comparison Result: #{existing_bill.update_date > last_view.last_viewed_at}" if last_view
         changed = if last_view
                     existing_bill.update_date > last_view.last_viewed_at
                   else
                     true
                   end
 
+
+        tracking_count = UserSavedBill.where(bill: existing_bill).count - 1
+
         bills << existing_bill.as_json(include: :sponsors)
-                              .merge(saved: true, changed: changed)
+                              .merge(saved: true, changed: changed,  tracking_count: tracking_count)
 
       else
 
         bill = existing_bill || fetch_bill_details(bill_data)
-        bills << bill.as_json(include: :sponsors).merge(saved: false)
+        tracking_count = Bill.exists?(package_id: package_id) ? UserSavedBill.where(bill: bill).count : 0
+
+        bills << bill.as_json(include: :sponsors).merge(saved: false,  tracking_count: tracking_count)
       end
     end
 

@@ -16,8 +16,8 @@ const BillBannerComponent = ({bill}) => {
 
     const handleSaveBill = async (e) => {
         e.stopPropagation()
-       await userSaveBill(bill);
-       setIsSaved(true)
+        await userSaveBill(bill);
+        setIsSaved(true)
     }
 
     const stopTrackingBill = async (e) => {
@@ -34,7 +34,7 @@ const BillBannerComponent = ({bill}) => {
 
     return (
         <>
-            <div onClick={handleBillClick} className={`bill-wrapper ${bill.changed ? 'bill-update': ""}`}>
+            <div onClick={handleBillClick} className={`bill-wrapper ${bill.changed ? 'bill-update' : ""}`}>
                 <section className="bill-info">
                     <div className="bill-number-date">
                         <p className="bill-number">{bill.bill_type.toUpperCase()
@@ -51,15 +51,20 @@ const BillBannerComponent = ({bill}) => {
                         <p className="truncate">{bill.latest_action_text}</p>
                     </section>
 
-                    {isSaved ? ( <button onClick={stopTrackingBill} className="track-btn btn-dark">STOP TRACKING BILL</button>) : (
+                    {isSaved ? (<button onClick={stopTrackingBill} className="track-btn btn-dark">STOP TRACKING
+                        BILL</button>) : (
                         <button onClick={handleSaveBill} className="track-btn btn-dark">TRACK BILL</button>)}
+
+                    <p className="tracking-subscript">
+                        {bill.tracking_count >= 2 ? (bill.tracking_count + " Other Users Tracking") : ("")}
+                    </p>
                 </section>
 
                 <div className="image-wrapper">
-                <p className="sponsor-header">Primary Sponsor</p>
+                    <p className="sponsor-header">Primary Sponsor</p>
                     <section className="bill-sponsors">
                         <section className="bill-sponsor">
-                            <img className="sponsor-image" src={bill.sponsors?.[0]?.image_url || "aoc.jpg"}  alt="temp"/>
+                            <img className="sponsor-image" src={bill.sponsors?.[0]?.image_url || "aoc.jpg"} alt="temp"/>
                             <p>{bill.sponsors?.[0]?.first_name || "err"} {bill.sponsors?.[0]?.last_name || "err"} </p>
                             <p>{bill.sponsors?.[0]?.party || "err"} - {bill.sponsors?.[0]?.state || "err"}</p>
                         </section>

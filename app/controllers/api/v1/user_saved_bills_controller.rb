@@ -14,7 +14,10 @@ class Api::V1::UserSavedBillsController < ApplicationController
                   true
                 end
 
-      bill.as_json(include: :sponsors).merge(saved: true, changed: changed)
+      tracking_count = UserSavedBill.where(bill: bill).count
+
+
+      bill.as_json(include: :sponsors).merge(saved: true, changed: changed, tracking_count: tracking_count)
     end
 
     render json: bills_with_sponsors, status: :ok
